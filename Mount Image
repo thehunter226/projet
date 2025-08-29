@@ -1,4 +1,4 @@
-mount /media/sf_A/usb.001 diskusb
+mount /media/sf_A/usb.001  nom de vostre image 
 sudo mount /media/sf_A/usb.001 diskusb
 mount -t vfat /media/sf_A/usb.001 diskusb
 sudo mount -t vfat /media/sf_A/usb.001 diskusb
