@@ -1,0 +1,10 @@
+tcpdump -A -r capture.pcap -s 0 > capture.txt
+grep -i "login" cap2.txt
+tcpdump -r pcap3.pcap -n -s 0 | grep -i 'USER\|PASS\|STOR\|RETR'
+tcpdump -r pcap3.pcap -n -s 0 | grep -i "LIST"
+tcpdump -r pcap4.pcap -n -s 0 port 53
+tshark -r pcap5.pcap -Y "http.request" -T fields -e http.host -e http.request.uri
+tcpdump -r pcap6.pcap -n -s 0 port 53 | awk '{print $5}'| grep ".53:" | sort -u
+tcpdump -r pcap6.pcap -n -s 0 port 53 | grep -i "MX" | cut -d " " -f7-
+tcpdump -nr pcap7.pcap | grep "GET / "
+tcpdump -nr pcap7.pcap | grep "39649"
