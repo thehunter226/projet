@@ -1,0 +1,164 @@
+Task-1: Configuring BGP
+R1
+debug bgp ipv6
+conf t
+router bgp 65012
+bgp router-id 192.168.60.1
+no bgp default ipv4-unicast
+
+R2
+
+debug bgp ipv6
+conf t
+router bgp 65012
+bgp router-id 192.168.60.2
+no bgp default ipv4-unicast
+
+
+R3
+
+debug bgp ipv6
+conf t
+router bgp 65034
+bgp router-id 192.168.60.3
+no bgp default ipv4-unicast
+
+
+R4
+
+debug bgp ipv6
+conf t
+router bgp 65034
+bgp router-id 192.168.60.4
+no bgp default ipv4-unicast
+
+
+Activation de iBGP sur R1 et R2
+
++++++R1
+neighbor 2001:DB8:1122:12::2 remote-as 65012
+neighbor 2001:DB8:1122:12::2 update-source Fa1/0
+address-family ipv6
+neighbor 2001:DB8:1122:12::2 activate
+network  2001:DB8:1234:1::/64
+network  FC00:1:2:12::/64
++++++R2
+neighbor 2001:DB8:1122:12::1 remote-as 65012
+neighbor 2001:DB8:1122:12::1 update-source Fa1/0
+address-family ipv6
+neighbor 2001:DB8:1122:12::1 activate
+network   2004:DB8:2233:23::/64
+network   FC00:1:2:12::/64
+
+Activation de iBGP sur R3 et R4
+
+++++R3
+
+neighbor 2001:DB8:3344:34::4 remote-as 65034
+neighbor 2001:DB8:3344:34::4 update-source Fa1/0
+address-family ipv6
+neighbor 2001:DB8:3344:34::4 activate
+network   2004:DB8:2233:23::/64
+network   FC00:3:4:34::/64
+
+++++++R4
+neighbor 2001:DB8:3344:34::3 remote-as 65034
+neighbor 2001:DB8:3344:34::3 update-source Fa1/0
+address-family ipv6
+neighbor 2001:DB8:3344:34::3 activate
+network  2001:DB8:1234:4::/64
+network   FC00:3:4:34::/64
+
+Verification 
+
+R1
+show bgp ipv6 unicast summary
+show bgp ipv6 unicast neighbor 2001:DB8:1122:12::2 advertised-route
+show bgp ipv6 unicast neighbor 2001:DB8:1122:12::2 route
+show ipv6 route bgp
+
+R2
+
+show bgp ipv6 unicast summary
+show bgp ipv6 unicast neighbor 2001:DB8:1122:12::1 advertised-route
+show bgp ipv6 unicast neighbor 2001:DB8:1122:12::1 route
+show ipv6 route bgp
+
+
+R3
+
+show bgp ipv6 unicast summary
+show bgp ipv6 unicast neighbor 2001:DB8:3344:34::4 advertised-route
+show bgp ipv6 unicast neighbor 2001:DB8:3344:34::4 route
+show ipv6 route bgp
+
+R4
+
+show bgp ipv6 unicast summary
+show bgp ipv6 unicast neighbor 2001:DB8:3344:34::3 advertised-route
+show bgp ipv6 unicast neighbor 2001:DB8:3344:34::3 route
+show ipv6 route bgp
+
+Activation de eBGP sur R2 et R3
+
++++++R2
+conf t
+router bgp 65012
+neighbor 2004:DB8:2233:23::3 remote-as 65034
+address-family ipv6
+neighbor 2004:DB8:2233:23::3 activate
+
+++++R3
+conf t
+router bgp 65034
+neighbor 2004:DB8:2233:23::2 remote-as 65012
+address-family ipv6
+neighbor 2004:DB8:2233:23::2 activate
+
+Look at the BGP routing table to determine if you received BGP routes from your neighbor
+++++R2
+show bgp ipv6 unicast summary
+show bgp ipv6 unicast neighbors 2004:DB8:2233:23::3 advertised-routes
+show bgp ipv6 unicast neighbors 2004:DB8:2233:23::3 routes
+show ipv6 route bgp
++++R3
+show bgp ipv6 unicast summary
+show bgp ipv6 unicast neighbors 2004:DB8:2233:23::2 advertised-routes
+show bgp ipv6 unicast neighbors 2004:DB8:2233:23::2 routes
+show ipv6 route bgp
+
+TASK-2: Filtering BGP Routes
+
++++++R2
+conf t
+ipv6 prefix-list lab5 deny fc00::/10 le 128
+ipv6 prefix-list lab5 permit ::/0 le 64
+router bgp 65012
+address-family ipv6
+neighbor 2004:DB8:2233:23::3 prefix-list lab5 in
+
+++++R3
+conf t
+ipv6 prefix-list lab5 deny fc00::/10 le 128
+ipv6 prefix-list lab5 permit ::/0 le 64
+router bgp 65034
+address-family ipv6
+neighbor 2004:DB8:2233:23::2 prefix-list lab5 in
+
+Verification sur R1 et R4
+
+++++R1 
+
+clear bgp ipv6 unicast 65012 in
+show bgp ipv6 unicast
+show bgp ipv6 unicast neighbors  2001:DB8:1122:12::2 advertised-routes
+show bgp ipv6 unicast neighbors  2001:DB8:1122:12::2 routes
+show ipv6 route bgp
+
+++++R4
+
+clear bgp ipv6 unicast 65034 in
+show bgp ipv6 unicast
+show bgp ipv6 unicast neighbors  2001:DB8:3344:34::3 advertised-routes
+show bgp ipv6 unicast neighbors  2001:DB8:3344:34::3 routes
+show ipv6 route bgp
