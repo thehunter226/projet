@@ -1,0 +1,18 @@
+mount /media/sf_A/usb.001 diskusb
+sudo mount /media/sf_A/usb.001 diskusb
+mount -t vfat /media/sf_A/usb.001 diskusb
+sudo mount -t vfat /media/sf_A/usb.001 diskusb
+ls
+ls -lh
+ls diskusb
+sudo ls diskusb
+sudo mount -t vfat /home/thestudent/Bureau/usb.001 diskusb
+mount -t vfat /home/thestudent/Bureau/usb.001 diskusb
+ll
+cd Bureau
+ls
+ll
+mount -t vfat /home/thestudent/Bureau/usb.001 diskusb
+sudo mount -t vfat /home/thestudent/Bureau/usb.001 diskusb
+cd ..
+sudo mount -t vfat /home/thestudent/Bureau/usb.001 diskusb
